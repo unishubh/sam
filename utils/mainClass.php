@@ -47,7 +47,7 @@ class mainClass
 			$limitPage=$pageNo;
 		
 			$db = getDB();
-			$stmt = $db->prepare("SELECT * FROM students WHERE name LIKE :searchString OR email LIKE :searchString OR rollno LIKE :searchString OR program_name LIKE :searchString OR program_start_date LIKE :searchString OR end_date LIKE :searchString  ORDER BY ".$orderCol." ".$orderDir." LIMIT :limitPage,:numberOfPages");
+			$stmt = $db->prepare("SELECT * FROM students WHERE enrolled=1 AND  (name LIKE :searchString OR email LIKE :searchString OR rollno LIKE :searchString OR program_name LIKE :searchString OR program_start_date LIKE :searchString OR end_date LIKE :searchString)  ORDER BY ".$orderCol." ".$orderDir." LIMIT :limitPage,:numberOfPages");
 			$stmt->bindParam("searchString", $searchString,PDO::PARAM_STR);
 			$stmt->bindParam("numberOfPages", $numberOfPages,PDO::PARAM_INT);
 			$stmt->bindParam("limitPage", $limitPage,PDO::PARAM_INT);
@@ -62,7 +62,7 @@ class mainClass
 			}
 			// $data=$this->getLeadArray($data);
 		
-			$stmt = $db->prepare("SELECT * FROM students WHERE name LIKE :searchString OR email LIKE :searchString OR rollno LIKE :searchString OR program_name LIKE :searchString OR program_start_date LIKE :searchString OR end_date LIKE :searchString");
+			$stmt = $db->prepare("SELECT * FROM students WHERE enrolled = 1 AND (name LIKE :searchString OR email LIKE :searchString OR rollno LIKE :searchString OR program_name LIKE :searchString OR program_start_date LIKE :searchString OR end_date LIKE :searchString) ");
 			$stmt->bindParam("searchString", $searchString,PDO::PARAM_STR);
 			$stmt->execute();
 			$allCount = $stmt->rowCount(); 

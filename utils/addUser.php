@@ -19,6 +19,7 @@ else
 	$username=$params['userName'];
 	$email=$params['email'];
 	$password=$params['password'];
+	$password=md5($password);
 	$role=$params['role'];
 	$stmt = $db->prepare( "INSERT INTO users VALUES ('','$role','$email','$password','$username') ");
 	$stmt->execute();

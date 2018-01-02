@@ -43,7 +43,7 @@ $(document).ready(function(){
 
         $('#mainContainer').append('<table class="table  table-hover display dt[-head|-body]-center table-border" id="studentsTable" style="width: 100%"><thead><tr id="studentsTableHeader"></tr></thead></table>')
         
-        var table_head = '<th>ID</th><th>ROLL NO</th><th>NAME</th><th>PROGRAM</th><th>EMAIL</th><th>AADHAR</th><th>REGISTRATION DATE</th><th>CESSATION DATE</th><th>EDIT/VIEW</th>';
+        var table_head = '<th>ID</th><th>ROLL NO</th><th>NAME</th><th>PROGRAM</th><th>EMAIL</th><th>AADHAR</th><th>REGISTRATION DATE</th><th>CESSATION DATE</th><th>EDIT</th><th>LEAVES</th>';
         var columnData = [];
         columnData.push({"data": "id"});
         columnData.push({"data": "rollno"});    
@@ -56,11 +56,20 @@ $(document).ready(function(){
         var obj = { targets : [4],
             "data": "id",
             "render" : function (data, type, row) {
-            var elem = '<a class="btn icon-btn btn-info editStudentData"><span class="fa fa-edit"></span>&nbspPROCEED</a>';
+            var elem = '<a class="btn icon-btn btn-info editStudentData"><span class="fa fa-edit"></span>&nbspEDIT</a>';
             return elem;
             }
         }
         columnData.push(obj); 
+        var obj = { targets : [4],
+            "data": "id",
+            "render" : function (data, type, row) {
+            var elem = '<a class="btn icon-btn btn-info viewStudentData"><span class="fa fa-edit"></span>&nbspLEAVES</a>';
+            return elem;
+            }
+        }
+        columnData.push(obj); 
+
 
         $('#studentsTableHeader').append(table_head);
 
@@ -192,7 +201,7 @@ $(document).ready(function(){
         $('#monthInput').val(5);
         $('#yearInput').val(2017);
         
-        var table_head = '<th>ID</th><th>ROLL NO</th><th>NAME</th><th>PROGRAM</th><th>PHONE</th><th>P</th><th>A</th><th>SL</th><th>ML</th><th>CL</th><th>MATERNITY</th><th>DUTY</th><th>PAYABLE</th><th>WO</th><th>AMOUNT</th><th>ACTION</th>';
+        var table_head = '<th>ID</th><th>ROLL NO</th><th>NAME</th><th>PROGRAM</th><th>PHONE</th><th>P</th><th>A</th><th>SL</th><th>ML</th><th>CL</th><th>MATERNITY</th><th>DUTY</th><th>PAYABLE</th><th>WO</th><th>AMOUNT</th><th>SAVE</th><th>SUBMIT</th>';
         // var allowedLeavesData;
 
         var columnData = [];
@@ -298,7 +307,24 @@ $(document).ready(function(){
         };
         columnData.push(obj); 
         columnData.push({"data": "payableDays"}); 
-        columnData.push({"data": "work_off"});
+        //columnData.push({"data": "work_off"});
+         var obj = { targets : [4],
+            "data": "work_off",
+            "render" : function (data, type, row) {
+                
+                if(data < 0)
+                {
+                    data += 190;
+                    var elem =  0 - data;
+                }else
+                {
+                    var elem = '<input type="text" class="multiLeavesPicker inputFieldMonthlyTable" value=""/>';
+                                        
+                }
+                return elem;
+            }
+        };
+        columnData.push(obj);
         columnData.push({"data": "payable"}); 
         var obj = { targets : [4],
             "data": "duty",
@@ -310,6 +336,22 @@ $(document).ready(function(){
                 }else
                 {
                     var elem = '<button class="btn btn-success saveData" type="button" name="submit" class="saveData">Save</button>';
+                }
+                return elem;
+            }
+        };
+        columnData.push(obj); 
+
+        var obj = { targets : [4],
+            "data": "duty",
+            "render" : function (data, type, row) {
+                if(data < 0)
+                {
+                    data += 190;
+                    var elem = '<b>DONE</b>';
+                }else
+                {
+                    var elem = '<button class="btn btn-danger saveData" type="button" name="submit" class="submitData">Submit</button>';
                 }
                 return elem;
             }
@@ -415,7 +457,7 @@ $(document).ready(function(){
         $('#sectionTitle').find('b').text('Records');
         $('#mainContainer').empty();
         $('#mainContainerButtons').css('display','block');
-        $('#mainContainer').append('<div class="well text-center"><button type="button" class="btn btn-hot text-capitalize btn-lg" id="printReport">Print Report</button> <button type="button" class="btn btn-sunny text-uppercase btn-lg" id="managePrograms">Manage Programs</button><button type="button" class="btn btn-fresh text-uppercase btn-lg" id="addUsers">Add Users</button><button type="button" class="btn btn-sky text-uppercase btn-lg" id="manage">Manage Users</button><button type="button" class="btn btn-sky text-uppercase btn-lg" id="ip">ADD IP ADDRESS</button></div>');
+        $('#mainContainer').append('<div class="well text-center"><button type="button" class="btn btn-hot text-capitalize btn-lg" id="printReport">PRINT REPORT</button> <button type="button" class="btn btn-sunny text-uppercase btn-lg" id="managePrograms">Manage Programs</button><button type="button" class="btn btn-fresh text-uppercase btn-lg" id="addUsers">Add Users</button><button type="button" class="btn btn-sky text-uppercase btn-lg" id="manage">Manage Users</button><button type="button" class="btn btn-sky text-uppercase btn-lg" id="ip">ADD IP ADDRESS</button></div>');
         $('#mainContainer').append('<div class="table-responsive" style="display:none" id="programsTableContainer"><table id="programsTable" class="table table-bordred table-striped"><thead><th>S.No</th><th>Name</th><th>Stipend</th><th>Tenure</th><th>Sanctioned</th><th>Contingency</th><th>Medical</th><th>Maternity</th><th>Duty</th><th>Edit</th><th>Delete</th></thead><tbody></tbody></table><button type="button" class="btn btn-success btn-md" id="addProgramBtn">Add New</button>');
         $('#mainContainer').append('<div class="table-responsive" style="display:none" id="ipTableContainer"><table id="ipTable" class="table table-bordred table-striped"><thead><th>S.No</th><th>Name</th><th>IP ADDRESS</th><th>Edit</th><th>Delete</th></thead><tbody></tbody></table><button type="button" class="btn btn-success btn-md" id="addIPBtn">Add New</button>');
         $('#mainContainer').append('<div class="table-responsive" style="display:none" id="userTableContainer"><table id="usersTable" class="table table-bordred table-striped"><thead><th>S.No</th><th>Name</th><th>email</th><th>role</th><th>Delete</th></thead><tbody></tbody></table>');
@@ -817,6 +859,10 @@ console.log(name);
 
     })
 
+    $(document.body).on('click', '.viewStudentData', function(){
+        $('#LeavesDetails').modal('toggle');
+
+    })
 
 
     $(document.body).on('click', '.editStudentData', function(){
@@ -832,6 +878,7 @@ console.log(name);
         $('#editStudentAadhar').val(allStudentsData[index].aadhar);
         $('#editStudentPhone').val(allStudentsData[index].phone);
         $('#editStudentAccountNo').val(allStudentsData[index].bank_ac_number);
+        $('#editStudentAccountNo').val('yes');        
         // end_date = "2016-11-13";
         var end_date = allStudentsData[index].end_date;
         var result = end_date.split('-');
@@ -855,6 +902,7 @@ console.log(name);
         var phone = $('#editStudentPhone').val();
         var bank = $('#editStudentPhone').val();
         var cessationDate = $('#editStudentCessationDate').val(); 
+        var enroll = $('#editStudentenroll').val(); 
         
         
 
@@ -863,7 +911,7 @@ console.log(name);
         $.ajax({
             type:"POST",
             url:"utils/updateStudent.php    ",
-            data:{name:name, rollno:rollno, programName:programName, email:email, aadhar:aadhar, phone:phone , bank:bank, cess:cessationDate},
+            data:{name:name, rollno:rollno, programName:programName, email:email, enrolled:enroll,aadhar:aadhar, phone:phone , bank:bank, cess:cessationDate},
             success:function(){
                 $.alert("Student details successfully updated");
             }
@@ -1155,26 +1203,23 @@ $(document.body).on('click', '#ip', function(){
         $('#myModal').modal('toggle');
 
         
-        var yearMonth = $('#reportMonth').val();
-        var result = yearMonth.split('-');
+        var month= $('#reportMonth').val();
+        var year= $('#reportYear').val();
         
-        var month = result[1]
-        var year = result[0];
-        console.log(month + " " + year)
         var program = $('#reportProgram').val();
 
         window.location = "./utils/printRecords.php?month="+month+"&year="+year+"&program_name="+program;
 
-        // $.ajax({
-        //     type:'POST',
-        //     url:'./utils/printRecords.php',
-        //     data:{month:month,year:year, program_name:program},
-        //     success:function(data)
-        //     {
-        //         console.log(data);
-        //     }
+        $.ajax({
+            type:'POST',
+            url:'./utils/printRecords.php',
+            data:{month:month,year:year, program_name:program},
+            success:function(data)
+            {
+                console.log(data);
+            }
     
-        // })
+        })
     })
 
     $(document.body).on('click', '#logoutBtn', function(){
@@ -1216,7 +1261,14 @@ $(document.body).on('click', '#ip', function(){
                 data: formData,
                 async: false,
                 success: function (data) {
-                    
+                    if(data==1)
+                    {
+                        alert("wrong");
+                    }
+                    else
+                    {
+                        alert("right");
+                    }
                 },
                 cache: false,
                 contentType: false,

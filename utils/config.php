@@ -6,7 +6,7 @@
 	/* DATABASE CONFIGURATION */
 	define('DB_SERVER', 'localhost');
 	define('DB_USERNAME', 'root');
-	define('DB_PASSWORD', 'root');
+	define('DB_PASSWORD', '');
 	define('DB_DATABASE', 'portal');
 	// define("BASE_URL", "http://localhost/LeadManagementSystem/"); // Eg. http://yourwebsite.com
 

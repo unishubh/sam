@@ -47,7 +47,7 @@ class mainClass
 			$limitPage=$pageNo;
 		
 			$db = getDB();
-			$stmt = $db->prepare("SELECT * FROM students WHERE name LIKE :searchString OR email LIKE :searchString OR rollno LIKE :searchString OR program_name LIKE :searchString OR program_start_date LIKE :searchString OR end_date LIKE :searchString  ORDER BY ".$orderCol." ".$orderDir." LIMIT :limitPage,:numberOfPages");
+			$stmt = $db->prepare("SELECT * FROM students WHERE enrolled=1 AND  (name LIKE :searchString OR email LIKE :searchString OR rollno LIKE :searchString OR program_name LIKE :searchString OR program_start_date LIKE :searchString OR end_date LIKE :searchString)  ORDER BY ".$orderCol." ".$orderDir." LIMIT :limitPage,:numberOfPages");
 			$stmt->bindParam("searchString", $searchString,PDO::PARAM_STR);
 			$stmt->bindParam("numberOfPages", $numberOfPages,PDO::PARAM_INT);
 			$stmt->bindParam("limitPage", $limitPage,PDO::PARAM_INT);
@@ -62,7 +62,7 @@ class mainClass
 			}
 			// $data=$this->getLeadArray($data);
 		
-			$stmt = $db->prepare("SELECT * FROM students WHERE name LIKE :searchString OR email LIKE :searchString OR rollno LIKE :searchString OR program_name LIKE :searchString OR program_start_date LIKE :searchString OR end_date LIKE :searchString");
+			$stmt = $db->prepare("SELECT * FROM students WHERE enrolled = 1 AND (name LIKE :searchString OR email LIKE :searchString OR rollno LIKE :searchString OR program_name LIKE :searchString OR program_start_date LIKE :searchString OR end_date LIKE :searchString) ");
 			$stmt->bindParam("searchString", $searchString,PDO::PARAM_STR);
 			$stmt->execute();
 			$allCount = $stmt->rowCount(); 
@@ -169,7 +169,7 @@ public function getMonthlyData($searchString,$numberOfPages,$pageNo,$draw,$order
 			$limitPage=$pageNo;
 		
 			$db = getDB();
-			$stmt = $db->prepare("SELECT attendance.form_submitted,attendance.payable as payable,attendance.id,students.rollno as rollno,students.email as email,students.program_start_date,students.end_date,students.name,students.program_name,attendance.present,attendance.absent,attendance.sanctioned,attendance.medical,attendance.contingency,attendance.duty,attendance.work_off,attendance.payable,attendance.form_submitted,students.phone,attendance.maternity FROM attendance LEFT JOIN students ON attendance.student_id = students.id WHERE (month=$month AND year=$year) AND ( students.name LIKE :searchString OR program_name LIKE :searchString OR students.phone LIKE :searchString OR email LIKE :searchString) ORDER BY ".$orderCol." ".$orderDir." LIMIT :limitPage,:numberOfPages");
+			$stmt = $db->prepare("SELECT attendance.form_submitted,attendance.payable as payable,attendance.id,students.rollno as rollno,students.email as email,students.program_start_date,students.end_date,students.name,students.program_name,attendance.present,attendance.absent,attendance.sanctioned,attendance.medical,attendance.contingency,attendance.duty,attendance.work_off,attendance.payable,attendance.form_submitted, attendance.processed_date, students.phone,attendance.maternity FROM attendance LEFT JOIN students ON attendance.student_id = students.id WHERE (month=$month AND year=$year) AND ( students.name LIKE :searchString OR program_name LIKE :searchString OR students.phone LIKE :searchString OR email LIKE :searchString) ORDER BY ".$orderCol." ".$orderDir." LIMIT :limitPage,:numberOfPages");
 			$stmt->bindParam("searchString", $searchString,PDO::PARAM_STR);
 			$stmt->bindParam("numberOfPages", $numberOfPages,PDO::PARAM_INT);
 			$stmt->bindParam("limitPage", $limitPage,PDO::PARAM_INT);
@@ -178,7 +178,7 @@ public function getMonthlyData($searchString,$numberOfPages,$pageNo,$draw,$order
 			$data=$stmt->fetchAll(PDO::FETCH_OBJ);
 			// $data=$this->getLeadArray($data);
 		
-			$stmt = $db->prepare("SELECT attendance.payable as payable,attendance.id,students.rollno as rollno,students.email as email,students.program_start_date,students.end_date,students.name,students.program_name,attendance.present,attendance.absent,attendance.sanctioned,attendance.medical,attendance.contingency,attendance.duty,attendance.work_off,attendance.payable,attendance.form_submitted,students.phone,attendance.maternity FROM attendance LEFT JOIN students ON attendance.student_id = students.id WHERE (month=$month AND year=$year) AND ( students.name LIKE :searchString OR program_name LIKE :searchString OR students.phone LIKE :searchString OR email LIKE :searchString) ");
+			$stmt = $db->prepare("SELECT attendance.payable as payable,attendance.id,students.rollno as rollno,students.email as email,students.program_start_date,students.end_date,students.name,students.program_name,attendance.present,attendance.absent,attendance.sanctioned,attendance.medical,attendance.contingency,attendance.duty,attendance.work_off,attendance.payable,attendance.form_submitted, attendance.processed_date, students.phone,attendance.maternity FROM attendance LEFT JOIN students ON attendance.student_id = students.id WHERE (month=$month AND year=$year) AND ( students.name LIKE :searchString OR program_name LIKE :searchString OR students.phone LIKE :searchString OR email LIKE :searchString) ");
 			$stmt->bindParam("searchString", $searchString,PDO::PARAM_STR);
 			$stmt->execute();
 			$allCount = $stmt->rowCount(); 
@@ -219,22 +219,256 @@ JOIN program ON students.program_id = program.id WHERE month = $month AND year =
 		}   
 	}
 
-	public function saveRecords($month,$year,$student_id,$program_name,$presents,$absents,$sl,$ml,$cl,$maternity,$duty)
-	{
-		$db = getDB();
+// 	public function saveRecords($month,$year,$student_id,$program_name,$presents,$absents,$sl,$ml,$cl,$maternity,$duty)
+// 	{
+// 		$db = getDB();
 
-		echo "sl is ".$sl."<br>";
+// 		echo "sl is ".$sl."<br>";
+// 		//echo typeof($sl);
+// 		if($sl == "")
+// 		{
+// 			echo "empty";
+// 			$sl = 0;
+// 			$sldate = array();
+// 		}
+// 		else
+// 		{
+// 			$sldate = explode(',',$sl);
+// 		$sl= sizeof($sldate);
+// 		}
+		
+// 		if($ml == "")
+// 		{
+// 			$ml =0;
+// 			$mldate = array();
+// 		}
+// 		else
+// 		{
+// 			$mldate = explode(',',$ml);
+// 		$ml= sizeof($ml);
+// 		}
+		
+// 		if($cl == "")
+// 		{
+// 			$cl =0;
+// 			$cldate = array();
+// 		}
+// 		else
+// 		{
+// 			$cldate = explode(',',$cl);
+// 		$cl= sizeof($cl);
+// 		}
+		
+// 		if($maternity == "")
+// 		{
+// 			$maternity ==0;
+// 			$maternitydate = array();
+// 		}
+// 		else
+// 		{
+// 			$maternitydate = explode(',',$maternity);
+// 		$maternity= sizeof($maternity);
+// 		}
+		
+// 		if($duty = 0)
+// 		{
+// 			$duty =0;
+// 			$dutydate = array();
+// 		}
+// 		else
+// 		{
+// 		$dutydate=explode(',',$duty);
+// 		$duty= sizeof($duty);
+
+// 	}
+
+
+
+
+
+// 		print_r($sldate);
+// 		echo "<br>";
+
+
+
+
+
+
+
+
+	
+// 		$stmt = $db->prepare("SELECT COUNT(*) as total, SUM(sanctioned) sanctioned, SUM(contingency) cl, SUM(medical) ml, SUM(maternity) maternity, SUM(duty) duty  FROM attendance WHERE student_id = (SELECT student_id FROM attendance WHERE id=:student_id) GROUP BY student_id");
+// 		$stmt->bindParam("student_id", $student_id,PDO::PARAM_STR);
+// 		$stmt->execute();
+// 		$previous_count=$stmt->fetchAll(PDO::FETCH_OBJ);
+// 		//var_dump($previous_count);
+// 		$previous_count = $previous_count[0];
+// 		//var_dump($previous_count);
+// 		// echo'<pre>';
+// 		// echo $previous_count[0]->sanctioned;
+// 		// echo '</pre>';
+
+// 		$stmt2 = $db->prepare("SELECT * FROM program WHERE program_name= :program_name");
+
+// 		$stmt2->bindParam("program_name", $program_name,PDO::PARAM_STR);
+// 		$stmt2->execute();
+// 		$allowed_count=$stmt2->fetchAll(PDO::FETCH_OBJ);
+// 		//var_dump($allowed_count);
+// 		$allowed_count = $allowed_count[0];
+// 		//echo "<br>";
+// 		//var_dump( $allowed_count);
+// 		//echo $allowed_count->sanctioned;
+
+// 		// echo $previous_count[0]->cl.'<br>';
+// 			// echo $allowed_count->contingency;
+
+
+
+
+// 		if((int)$allowed_count->sanctioned-(int)$previous_count->sanctioned <$sl)
+// 			return '-1';
+// 		if($allowed_count->contingency - $previous_count->cl < $cl)
+// 		{
+			
+// 			echo $allowed_count->contingency - $previous_count->cl."<br>" ;
+// 			return '-2';
+// 		}
+// 		if($allowed_count->medical - $previous_count->ml < $sl )
+// 			return '-3';
+// 		if($allowed_count->maternity - $previous_count->maternity < $maternity )
+// 			return '-4';
+// 		if($allowed_count->duty - $previous_count->duty < $duty)
+// 			return '-5';
+
+
+// 		$stmt2 = $db->prepare("SELECT stipend FROM program WHERE program_name= :program_name");
+
+// 		$stmt2->bindParam("program_name", $program_name,PDO::PARAM_STR);
+// 		$stmt2->execute();
+// 		$stipend=$stmt2->fetchAll(PDO::FETCH_OBJ);
+// 		//var_dump($stipend[0]->stipend);
+// 		$stipend= $stipend[0]->stipend;
+// 		//$stipend = 12400;
+// 		$stmt2 = $db->prepare("SELECT sanctioned,medical,contingency,maternity,duty,work_off FROM attendance WHERE id=$student_id");
+
+// 		//$stmt2->bindParam("stu", $student_id,PDO::PARAM_STR);
+// 		$stmt2->execute();
+// 		$leaves_claimed=$stmt2->fetchAll(PDO::FETCH_OBJ);
+// 		//var_dump($leaves_claimed[0]);
+// 		$leaves_claimed = $leaves_claimed[0];
+
+// 		echo $absents."<br>";
+// 		echo  $leaves_claimed->sanctioned."<br>";
+// 		echo $leaves_claimed->medical;
+// 		if($absents< $leaves_claimed->sanctioned+$leaves_claimed->medical+$leaves_claimed->contingency+$leaves_claimed->maternity+$leaves_claimed->duty+$sl+$ml+$cl+$maternity+$duty)
+// 		{
+// 			echo "Bahr hai";
+
+// 			return -11;	
+// 		}
+
+// 		$presents = $presents + ($leaves_claimed->work_off+$sl+$ml+$cl+$maternity+$duty+$leaves_claimed->contingency+$leaves_claimed->medical+$leaves_claimed->sanctioned+$leaves_claimed->maternity+$leaves_claimed->duty);
+// 		if($absents<0)
+// 			return -10;
+
+// 		$months = [31,28,31,30,31,30,31,31,30,31,30,31];
+// 		if($year%4==0)
+// 			$months[1] == 29;
+// 		$amount = ($stipend/$months[$month])*($presents);
+// 		echo $amount;
+
+// 		$stmt2 = $db->prepare("SELECT student_id FROM attendance WHERE id=$student_id");
+
+// 		$stmt2->bindParam("stu", $student_id,PDO::PARAM_STR);
+// 		$stmt2->execute();
+// 		$ide=$stmt2->fetchAll(PDO::FETCH_OBJ);
+// 		$ide=$ide[0]->student_id;
+// 		echo "SL DATE IS".sizeof($sldate).'<br>';
+// 	//	echo $mldata;
+// 		//var_dump($ide);
+// 		if($sl != 0)
+// 		{
+// 		$type="sl";
+// 		$sldate = implode('-',$sldate);
+// 		$qry="INSERT INTO dateattendance (student_id,dates,type) VALUES ($student_id, '$sldate', '$type')";
+// 		echo $qry;
+// 		$stmt = $db->prepare($qry);
+// 		$stmt->execute();
+// 	}
+
+// 		if($ml != 0)
+// 		{
+// 		$type="ml";
+// 		$sldate = implode('-',$mldate);
+// 		$qry="INSERT INTO dateattendance (student_id,dates,type) VALUES ($student_id, '$sldate', '$type')";
+// 		echo $qry;
+// 		$stmt = $db->prepare($qry);
+// 		$stmt->execute();
+// 	}
+
+
+// 		if($cl != 0)
+// 		{
+// 		$type="cl";
+// 		$sldate = implode('-',$cldate);
+// 		$qry="INSERT INTO dateattendance (student_id,dates,type) VALUES ($student_id, '$sldate', '$type')";
+// 		echo $qry;
+// 		$stmt = $db->prepare($qry);
+// 		$stmt->execute();
+// }
+
+// 		if($maternity != 0)
+// 		{
+// 		$type="maternity";
+// 		$sldate = implode('-',$maternitydate);
+// 		$qry="INSERT INTO dateattendance (student_id,dates,type) VALUES ($student_id, '$sldate', '$type')";
+// 		echo $qry;
+// 		$stmt = $db->prepare($qry);
+// 		$stmt->execute();
+// }
+
+
+
+		
+		
+// 		$stmt = $db->prepare("UPDATE attendance SET payable=$amount,sanctioned = $sl+$leaves_claimed->sanctioned, medical = $ml+$leaves_claimed->medical, contingency = $cl+$leaves_claimed->contingency,maternity = $maternity+$leaves_claimed->maternity, duty=$duty+$leaves_claimed->duty ,form_submitted = 1 WHERE id=$student_id AND month = $month AND year = $year");
+// 		$stmt->execute();
+// 		http_response_code("200");
+// 		return 1;
+
+
+// 	}
+
+
+
+
+public function saveRecords($month,$year,$student_id,$rollno,$program_name,$presents,$absents,$sl,$ml,$cl,$maternity,$duty,$work_off,$form_submit,$currdate)
+	{
+		//echo "Id is ".$student_id;
+		$db = getDB();
+		//$work_off = 375;
+		//echo "sl is ".$sl."<br>";
 		//echo typeof($sl);
+
+		$stmt = $db->prepare("SELECT  * FROM students WHERE id = :studen_id ");
+		//echo $student_id;
+		$stmt->bindParam("studen_id", $student_id,PDO::PARAM_STR);
+		$stmt->execute();
+		$gender=$stmt->fetchAll(PDO::FETCH_OBJ);
+		//var_dump($previous_count);
+		$gender = $gender[0]->gender;
+
+
 		if($sl == "")
 		{
-			echo "empty";
+			//echo "empty";
 			$sl = 0;
 			$sldate = array();
 		}
 		else
 		{
 			$sldate = explode(',',$sl);
-		$sl= sizeof($sldate);
+			$sl= sizeof($sldate);
 		}
 		
 		if($ml == "")
@@ -245,7 +479,7 @@ JOIN program ON students.program_id = program.id WHERE month = $month AND year =
 		else
 		{
 			$mldate = explode(',',$ml);
-		$ml= sizeof($ml);
+		$ml= sizeof($mldate);
 		}
 		
 		if($cl == "")
@@ -256,38 +490,54 @@ JOIN program ON students.program_id = program.id WHERE month = $month AND year =
 		else
 		{
 			$cldate = explode(',',$cl);
-		$cl= sizeof($cl);
+		$cl= sizeof($cldate);
 		}
 		
-		if($maternity == "")
+		if($gender==1 || $maternity == "" )
 		{
-			$maternity ==0;
+			$maternity =0;
 			$maternitydate = array();
 		}
 		else
 		{
 			$maternitydate = explode(',',$maternity);
-		$maternity= sizeof($maternity);
+		$maternity= sizeof($maternitydate);
 		}
-		
-		if($duty = 0)
+
+		if($duty == "")
 		{
 			$duty =0;
 			$dutydate = array();
 		}
 		else
 		{
-		$dutydate=explode(',',$duty);
-		$duty= sizeof($duty);
+			$dutydate = explode(',',$duty);
+		$duty= sizeof($dutydate);
+		}
 
-	}
+		if($work_off == "")
+		{
+			$work_off =0;
+			$work_offdate = array();
+		}
+		else
+		{
+			$work_offdate = explode(',',$work_off);
+		$work_off= sizeof($work_offdate);
+		}
+		
+		if($form_submit==0)
+		{
+			$currdate=NULL;
+		}
 
 
 
 
 
-		print_r($sldate);
-		echo "<br>";
+
+		/*print_r($sldate);*/
+		//echo "<br>";
 
 
 
@@ -297,12 +547,14 @@ JOIN program ON students.program_id = program.id WHERE month = $month AND year =
 
 
 	
-		$stmt = $db->prepare("SELECT COUNT(*) as total, SUM(sanctioned) sanctioned, SUM(contingency) cl, SUM(medical) ml, SUM(maternity) maternity, SUM(duty) duty  FROM attendance WHERE student_id = (SELECT student_id FROM attendance WHERE id=:student_id) GROUP BY student_id");
-		$stmt->bindParam("student_id", $student_id,PDO::PARAM_STR);
+		$stmt = $db->prepare("SELECT COUNT(*) as total, SUM(sanctioned) sanctioned, SUM(contingency) cl, SUM(medical) ml, SUM(maternity) maternity, SUM(duty) duty , SUM(work_off) work_off  FROM attendance WHERE student_id = :studen_id GROUP BY student_id");
+		//echo $student_id;
+		$stmt->bindParam("studen_id", $student_id,PDO::PARAM_STR);
 		$stmt->execute();
 		$previous_count=$stmt->fetchAll(PDO::FETCH_OBJ);
 		//var_dump($previous_count);
 		$previous_count = $previous_count[0];
+		//echo "Previos count is <br>";
 		//var_dump($previous_count);
 		// echo'<pre>';
 		// echo $previous_count[0]->sanctioned;
@@ -315,7 +567,7 @@ JOIN program ON students.program_id = program.id WHERE month = $month AND year =
 		$allowed_count=$stmt2->fetchAll(PDO::FETCH_OBJ);
 		//var_dump($allowed_count);
 		$allowed_count = $allowed_count[0];
-		//echo "<br>";
+		//echo "Showing allowed cpunts <br>";
 		//var_dump( $allowed_count);
 		//echo $allowed_count->sanctioned;
 
@@ -326,19 +578,21 @@ JOIN program ON students.program_id = program.id WHERE month = $month AND year =
 
 
 		if((int)$allowed_count->sanctioned-(int)$previous_count->sanctioned <$sl)
-			return '-1';
+			return -1;
 		if($allowed_count->contingency - $previous_count->cl < $cl)
 		{
 			
-			echo $allowed_count->contingency - $previous_count->cl."<br>" ;
-			return '-2';
+			//echo $allowed_count->contingency - $previous_count->cl."<br>" ;
+			return -2;
 		}
-		if($allowed_count->medical - $previous_count->ml < $sl )
-			return '-3';
+		if($allowed_count->medical - $previous_count->ml < $ml )
+			return -3;
 		if($allowed_count->maternity - $previous_count->maternity < $maternity )
-			return '-4';
+			return -4;
 		if($allowed_count->duty - $previous_count->duty < $duty)
-			return '-5';
+			return -5;
+		if($allowed_count->work_off - $previous_count->work_off < $work_off)
+			return -6;
 
 
 		$stmt2 = $db->prepare("SELECT stipend FROM program WHERE program_name= :program_name");
@@ -349,95 +603,162 @@ JOIN program ON students.program_id = program.id WHERE month = $month AND year =
 		//var_dump($stipend[0]->stipend);
 		$stipend= $stipend[0]->stipend;
 		//$stipend = 12400;
-		$stmt2 = $db->prepare("SELECT sanctioned,medical,contingency,maternity,duty,work_off FROM attendance WHERE id=$student_id");
+		/*$stmt2 = $db->prepare("SELECT sanctioned,medical,contingency,maternity,duty,work_off FROM attendance WHERE id=$student_id");
 
 		//$stmt2->bindParam("stu", $student_id,PDO::PARAM_STR);
 		$stmt2->execute();
 		$leaves_claimed=$stmt2->fetchAll(PDO::FETCH_OBJ);
-		//var_dump($leaves_claimed[0]);
+		echo 'Leaves Claimed <br>';
+		var_dump($leaves_claimed[0]);
 		$leaves_claimed = $leaves_claimed[0];
+*/
+		//echo $absents."<br>";
+		//echo  $leaves_claimed->sanctioned."<br>";
+		//echo $leaves_claimed->medical;
+		
+		$stmt = $db->prepare("SELECT  * FROM attendance WHERE student_id = :studen_id AND month=$month AND year=$year");
+		//echo $student_id;
+		$stmt->bindParam("studen_id", $student_id,PDO::PARAM_STR);
+		$stmt->execute();
+		$month_count=$stmt->fetchAll(PDO::FETCH_OBJ);
+		//var_dump($previous_count);
+		$month_count = $month_count[0];
+		
 
-		echo $absents."<br>";
-		echo  $leaves_claimed->sanctioned."<br>";
-		echo $leaves_claimed->medical;
-		if($absents< $leaves_claimed->sanctioned+$leaves_claimed->medical+$leaves_claimed->contingency+$leaves_claimed->maternity+$leaves_claimed->duty+$sl+$ml+$cl+$maternity+$duty)
+		$nsl=$sl+$month_count->sanctioned;
+		$ncl=$cl+$month_count->contingency;
+		$nml=$ml+$month_count->medical;
+		$nmaternity=$maternity+$month_count->maternity;
+		$nduty=$duty+$month_count->duty;
+		$nwork_off=$work_off+$month_count->work_off;
+
+		if($absents< $nsl+$nml+$ncl+$nmaternity+$nduty+$nwork_off)
 		{
-			echo "Bahr hai";
+			//echo "Bahr hai";
 
 			return -11;	
 		}
 
-		$presents = $presents + ($leaves_claimed->work_off+$sl+$ml+$cl+$maternity+$duty+$leaves_claimed->contingency+$leaves_claimed->medical+$leaves_claimed->sanctioned+$leaves_claimed->maternity+$leaves_claimed->duty);
+		$presents = (int)$presents + ($nsl+$nml+$ncl+$nmaternity+$nduty+$nwork_off);
+		//echo "Presents ".$presents;
 		if($absents<0)
 			return -10;
 
 		$months = [31,28,31,30,31,30,31,31,30,31,30,31];
-		if($year%4==0)
+		if($year%4 ==0 && $year%100!=0)
 			$months[1] == 29;
-		$amount = ($stipend/$months[$month])*($presents);
-		echo $amount;
+		$amount = ($stipend/$months[$month-1])*($presents);
+		//echo "<br>Month is ".$month;
+		//echo $amount;
 
-		$stmt2 = $db->prepare("SELECT student_id FROM attendance WHERE id=$student_id");
-
-		$stmt2->bindParam("stu", $student_id,PDO::PARAM_STR);
-		$stmt2->execute();
-		$ide=$stmt2->fetchAll(PDO::FETCH_OBJ);
-		$ide=$ide[0]->student_id;
-		echo "SL DATE IS".sizeof($sldate).'<br>';
+	
 	//	echo $mldata;
 		//var_dump($ide);
 		if($sl != 0)
 		{
 		$type="sl";
-		$sldate = implode('-',$sldate);
-		$qry="INSERT INTO dateattendance (student_id,dates,type) VALUES ($student_id, '$sldate', '$type')";
-		echo $qry;
+		$x=sizeof($sldate);
+		for($d = 0 ; $d<$x;$d++){
+			$qry="INSERT INTO dateattendance (student_id,dates,type) VALUES ('$student_id', '$sldate[$d]', '$type')";
+		//echo $qry;
 		$stmt = $db->prepare($qry);
 		$stmt->execute();
+		
+	}
+		
 	}
 
 		if($ml != 0)
 		{
 		$type="ml";
-		$sldate = implode('-',$mldate);
-		$qry="INSERT INTO dateattendance (student_id,dates,type) VALUES ($student_id, '$sldate', '$type')";
-		echo $qry;
+		$x=sizeof($mldate);
+		for($d = 0 ; $d<$x;$d++){
+			$qry="INSERT INTO dateattendance (student_id,dates,type) VALUES ('$student_id', '$mldate[$d]', '$type')";
+		//echo $qry;
 		$stmt = $db->prepare($qry);
 		$stmt->execute();
+		}
 	}
 
 
 		if($cl != 0)
 		{
 		$type="cl";
-		$sldate = implode('-',$cldate);
-		$qry="INSERT INTO dateattendance (student_id,dates,type) VALUES ($student_id, '$sldate', '$type')";
-		echo $qry;
+		$x=sizeof($cldate);
+		for($d = 0 ; $d<$x;$d++){
+			$qry="INSERT INTO dateattendance (student_id,dates,type) VALUES ('$student_id', '$cldate[$d]', '$type')";
+		//echo $qry;
 		$stmt = $db->prepare($qry);
 		$stmt->execute();
+		}
 }
 
 		if($maternity != 0)
 		{
 		$type="maternity";
-		$sldate = implode('-',$maternitydate);
-		$qry="INSERT INTO dateattendance (student_id,dates,type) VALUES ($student_id, '$sldate', '$type')";
-		echo $qry;
+		$x=sizeof($maternitydate);
+		for($d = 0 ; $d<$x;$d++){
+			$qry="INSERT INTO dateattendance (student_id,dates,type) VALUES ('$student_id', '$maternitydate[$d]', '$type')";
+		//echo $qry;
 		$stmt = $db->prepare($qry);
 		$stmt->execute();
+		}
+}
+
+	if($duty != 0)
+		{
+		$type="duty";
+		$x=sizeof($dutydate);
+		for($d = 0 ; $d<$x;$d++){
+			$qry="INSERT INTO dateattendance (student_id,dates,type) VALUES ('$student_id', '$dutydate[$d]', '$type')";
+		//echo $qry;
+		$stmt = $db->prepare($qry);
+		$stmt->execute();
+		}
+}
+
+if($work_off != 0)
+		{
+		$type="work_off";
+		$x=sizeof($work_offdate);
+		for($d = 0 ; $d<$x;$d++){
+			$qry="INSERT INTO dateattendance (student_id,dates,type) VALUES ('$student_id', '$work_offdate[$d]', '$type')";
+		//echo $qry;
+		$stmt = $db->prepare($qry);
+		$stmt->execute();
+		}
 }
 
 
+		//echo "from here";
+		
+		//echo $currdate;
+		$stmt = $db->prepare("UPDATE attendance SET payable=$amount,sanctioned = sanctioned+$sl, medical =medical+ $ml, contingency =contingency+$cl,maternity = maternity+$maternity, duty=duty+$duty, work_off=work_off+$work_off, form_submitted=$form_submit , processed_date='$currdate'  WHERE student_id=$student_id AND month = $month AND year = $year");
+		$stmt->execute();	
 
-		
-		
-		$stmt = $db->prepare("UPDATE attendance SET payable=$amount,sanctioned = $sl+$leaves_claimed->sanctioned, medical = $ml+$leaves_claimed->medical, contingency = $cl+$leaves_claimed->contingency,maternity = $maternity+$leaves_claimed->maternity, duty=$duty+$leaves_claimed->duty ,form_submitted = 1 WHERE id=$student_id AND month = $month AND year = $year");
-		$stmt->execute();
-		http_response_code("200");
-		return 1;
+
+
+		//http_response_code("200");
+		$m=$presents.",".$amount;
+		//echo "sdf".$m;
+		return $m;
 
 
 	}
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
 
 
 

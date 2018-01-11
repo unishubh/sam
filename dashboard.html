@@ -147,21 +147,21 @@
                                 
                             
                         </div>
-                        <div class="col-sm-6">
+                        <div class="col-sm-6" style="text-align: center;">
                             <select class="" id="monthMonthlyCsv" name="month">
                             <!-- <datalist id="months"> -->
-                                <option value="01">January</option>
-                                <option value="02">February</option>
-                                <option value="03">March</option>
-                                <option value="04">April</option>
-                                <option value="05">May</option>
-                                <option value="06">June</option>
-                                <option value="07">July</option>
-                                <option value="08">August</option>
-                                <option value="09">September</option>
-                                <option value="10">October</option>
-                                <option value="11">November</option>
-                                <option value="12">December</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
+                                <option value="11">11</option>
+                                <option value="12">12</option>
                             </select>
                             <select class="" id="yearMonthlyCsv" name="year">
                             <!-- <datalist id="months"> -->
@@ -224,12 +224,15 @@
                     
                     <div class="form-group">
                         <p><b>Month & Year</b></p>
-                        <input class="form-control " type="month" id="reportMonth" placeholder="Name">
+                        <!-- <input class="form-control " type="month" id="reportMonth" placeholder="Name"> -->
+                       <select type="text" placeholder="Month" id="reportMonth"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option></select><select type="text" placeholder="Year" id="reportYear"><option value="2005">2005</option><option value="2006">2006</option><option value="2007">2007</option><option value="2008">2008</option><option value="2009">2009</option><option value="2010">2010</option><option value="2011">2011</option><option value="2012">2012</option><option value="2013">2013</option><option value="2014">2014</option><option value="2015">2015</option><option value="2016">2016</option><option value="2017">2017</option><option value="2018">2018</option><option value="2019">2019</option><option value="2020">2020</option></select>
                     </div>
                     <div class="form-group">
                         <p><b>Program</b></p>
                         <select id="reportProgram">
-
+                        </select><br><br>
+                        <button class="btn btn-warning" type="button" id="report_filter">GO</button><br>Processed Date<br>
+                        <select id="reportDate">
                         </select>
                     </div>
                     
@@ -458,8 +461,6 @@
       <!-- /.modal-dialog --> 
     </div>
 
-
-
     <!-- Edit Student Data Modal -->
 
     <div id="editStudentData" class="modal fade">
@@ -504,6 +505,13 @@
                         <p><b>Cessation Date</b></p>
                         <input class="form-control " type="date" id="editStudentCessationDate" placeholder="Student's Cessation date">
                     </div>
+                    <div class="form-group">
+                        <p><b>Currently Studies</b></p>
+                        <select id="editStudentenroll">
+                            <option>yes</option>
+                            <option>no</option>
+                        </select>
+                    </div>
                     <!-- <div class="form-group">
                         <p><b>Duty leaves entitled</b></p>
                         <input class="form-control " type="number" id="editDuty" placeholder="Duty">
@@ -526,6 +534,12 @@
     </div>
 <script type="text/javascript">
     $('#editIPusername').eComboBox();
+     var today = new Date();
+           // var dd = today.getDate();
+            var mm = today.getMonth()+1;
+            var yyyy = today.getFullYear();
+    $('#monthMonthlyCsv').val(mm);
+    $('#yearMonthlyCsv').val(yyyy);
 </script>
   </body>
 </html>

@@ -41,7 +41,7 @@ else
 	$stmt->execute();
 	$student_id=$stmt->fetchAll(PDO::FETCH_OBJ);
 	$student_id=$student_id[0]->id;
-	$responseObj = ($mainClass->saveRecords($month,$year,$student_id,$rollno,$program_name,$presents,$absents,$sl,$ml,$cl,$maternity,$duty,$work_off,0,$d));
+	$responseObj = ($mainClass->saveRecords($month,$year,$student_id,$rollno,$program_name,$presents,$absents,$sl,$ml,$cl,$maternity,$duty,$work_off,1,$d));
 
 	if($responseObj)
 	{

@@ -26,7 +26,6 @@ $(document).ready(function(){
         });
     })   
 
-
     
  
     
@@ -43,24 +42,26 @@ $(document).ready(function(){
 
         $('#mainContainer').append('<table class="table  table-hover display dt[-head|-body]-center table-border" id="studentsTable" style="width: 100%"><thead><tr id="studentsTableHeader"></tr></thead></table>')
         
-        var table_head = '<th>ID</th><th>ROLL NO</th><th>NAME</th><th>PROGRAM</th><th>EMAIL</th><th>AADHAR</th><th>REGISTRATION DATE</th><th>CESSATION DATE</th><th>EDIT/VIEW</th>';
+        var table_head = '<th>ID</th><th>ROLL NO</th><th>NAME</th><th>PROGRAM</th><th>EMAIL</th><th>AADHAR</th><th>BANK ACC NUMBER</th><th>REGISTRATION DATE</th><th>CESSATION DATE</th><th>EDIT</th>';
         var columnData = [];
         columnData.push({"data": "id"});
         columnData.push({"data": "rollno"});    
         columnData.push({"data": "name"});
         columnData.push({"data": "program_name"});
         columnData.push({"data": "email"}); 
-        columnData.push({"data": "aadhar"}); 
+        columnData.push({"data": "aadhar"});
+        columnData.push({"data": "bank_ac_number"}); 
         columnData.push({"data": "program_start_date"});
         columnData.push({"data": "end_date"});  
         var obj = { targets : [4],
             "data": "id",
             "render" : function (data, type, row) {
-            var elem = '<a class="btn icon-btn btn-info editStudentData"><span class="fa fa-edit"></span>&nbspPROCEED</a>';
+            var elem = '<a class="btn icon-btn btn-info editStudentData"><span class="fa fa-edit"></span>&nbspEDIT</a>';
             return elem;
             }
         }
         columnData.push(obj); 
+
 
         $('#studentsTableHeader').append(table_head);
 
@@ -177,22 +178,24 @@ $(document).ready(function(){
 
     
 
-    monthlyRecord = function(month, year){
+    monthlyRecord = function(month, year,choice,date_processed=''){
         
         $('#mainContainerHead').empty();
         $('#mainContainerHead').append('<h1>Monthly Record</h1>');
         $('#sectionTitle').find('b').text('Records');
         $('#mainContainer').empty();
+
         // $('#mainContainerButtons').css('display','none')
-        $('#mainContainerHead').append('<div> <select type="text" placeholder="Month" id="monthInput"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option></select><select type="text" placeholder="Year" id="yearInput"><option value="2005">2005</option><option value="2006">2006</option><option value="2007">2007</option><option value="2008">2008</option><option value="2009">2009</option><option value="2010">2010</option><option value="2011">2011</option><option value="2012">2012</option><option value="2013">2013</option><option value="2014">2014</option><option value="2015">2015</option><option value="2016">2016</option><option value="2017">2017</option><option value="2018">2018</option><option value="2019">2019</option><option value="2020">2020</option></select><button class="btn btn-warning" type="button" id="formSubmit">Submit</button></div>');
+        $('#mainContainerHead').append('<div> <select type="text" placeholder="Month" id="monthInput"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option></select><select type="text" placeholder="Year" id="yearInput"><option value="2005">2005</option><option value="2006">2006</option><option value="2007">2007</option><option value="2008">2008</option><option value="2009">2009</option><option value="2010">2010</option><option value="2011">2011</option><option value="2012">2012</option><option value="2013">2013</option><option value="2014">2014</option><option value="2015">2015</option><option value="2016">2016</option><option value="2017">2017</option><option value="2018">2018</option><option value="2019">2019</option><option value="2020">2020</option></select><select id="filter"><option selected="true">all</option><option>form_submitted</option><option>pending</option></select><button class="btn btn-warning" type="button" id="formSubmit">Submit</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Processed Dates<select id="process_dropdown"></select><button class="btn btn-warning" type="button" id="process_filter">GO</button></div>');
         $('#mainContainer').append('<table class="table  table-hover display dt[-head|-body]-center table-border" id="studentsTable" style="width: 100%"><thead><tr id="studentsTableHeader"></tr></thead></table>')
         $('#uploadMonthlyCsvContainer').css("display","block")
         $('#uploadAllStudentsContainer').css("display","none")
         
-        $('#monthInput').val(5);
-        $('#yearInput').val(2017);
+        //$('#monthInput').val(5);
+        //$('#yearInput').val(2017);
         
-        var table_head = '<th>ID</th><th>ROLL NO</th><th>NAME</th><th>PROGRAM</th><th>PHONE</th><th>P</th><th>A</th><th>SL</th><th>ML</th><th>CL</th><th>MATERNITY</th><th>DUTY</th><th>PAYABLE</th><th>WO</th><th>AMOUNT</th><th>ACTION</th>';
+        
+        var table_head = '<th>ID</th><th>ROLL NO</th><th>NAME</th><th>PROGRAM</th><th>PHONE</th><th>P</th><th>A</th><th>SL</th><th>ML</th><th>CL</th><th>MATERNITY</th><th>DUTY</th><th>PAYABLE</th><th>WO</th><th>AMOUNT</th><th>SAVE</th><th>SUBMIT</th>';
         // var allowedLeavesData;
 
         var columnData = [];
@@ -298,18 +301,53 @@ $(document).ready(function(){
         };
         columnData.push(obj); 
         columnData.push({"data": "payableDays"}); 
-        columnData.push({"data": "work_off"});
-        columnData.push({"data": "payable"}); 
-        var obj = { targets : [4],
-            "data": "duty",
+        //columnData.push({"data": "work_off"});
+         var obj = { targets : [4],
+            "data": "work_off",
             "render" : function (data, type, row) {
+                
                 if(data < 0)
                 {
                     data += 190;
+                    var elem =  0 - data;
+                }else
+                {
+                    var elem = '<input type="text" class="multiLeavesPicker inputFieldMonthlyTable" value=""/>';
+                                        
+                }
+                return elem;
+            }
+        };
+        
+        columnData.push(obj);
+        columnData.push({"data": "payable"}); 
+        var obj = { targets : [4],
+            "data": "form_submitted",
+            "render" : function (data, type, row) {
+                if(data == 1)
+                {
+                    //data += 190;
                     var elem = '<b>DONE</b>';
                 }else
                 {
-                    var elem = '<button class="btn btn-success saveData" type="button" name="submit" class="saveData">Save</button>';
+                    var elem = '<button class="btn btn-success saveData" type="button" name="save" class="saveData">Save</button>';
+                }
+                return elem;
+            }
+        };
+        columnData.push(obj); 
+
+        var obj = { targets : [4],
+            "data": "form_submitted",
+            "render" : function (data, type, row) {
+                if(data == 1)
+                {
+                    //data += 190;
+                    var elem = '<b>DONE</b>';
+                }
+
+                else{
+                    var elem = '<button class="btn btn-danger submitData" type="button" name="submit" class="submitData">Submit</button>';
                 }
                 return elem;
             }
@@ -343,7 +381,7 @@ $(document).ready(function(){
                     // console.log('received');
                     allowedLeavesData = json.studentArray.data;
                     // console.log(leads);
-                    
+                    var pdates=Array();
                     console.log(allowedLeavesData.length);
                     for(var i = 0; i <allowedLeavesData.length ;i++)
                     {
@@ -354,7 +392,10 @@ $(document).ready(function(){
                         var cl =  allowedLeavesData[i].total_contingency;
                         var duty =  allowedLeavesData[i].total_duty;
                         var maternity = allowedLeavesData[i].total_maternity;
-                        
+                        if(pdates.indexOf(json.studentArray.data[i].processed_date)=== -1){
+                            if(json.studentArray.data[i].processed_date!='')
+                                pdates.push(json.studentArray.data[i].processed_date);
+                        }
                         json.studentArray.data[i].sanctioned = sl;
                         json.studentArray.data[i].medical = ml;
                         json.studentArray.data[i].contingency = cl;
@@ -367,7 +408,10 @@ $(document).ready(function(){
                             json.studentArray.data[i].contingency = -parseInt(cl)-190;
                             json.studentArray.data[i].duty = -parseInt(duty)-190;
                             json.studentArray.data[i].maternity = -parseInt(maternity)-190;
+
                         }   
+
+
                         // console.log(json.studentArray.data[i].sanctioned)
 
                         json.studentArray.data[i].allowed_sanctioned = allowedLeavesData[i].total_sanctioned;
@@ -380,6 +424,34 @@ $(document).ready(function(){
                         console.log(json.studentArray.data[i]);
                     }
                     
+                        if(choice=='form_submitted')
+                        {
+                            json.studentArray.data=json.studentArray.data.filter(function(item){
+                                return item.form_submitted==1;
+                            });
+                               // array_push(del,i);
+                        }
+                        else if(choice=='pending')
+                        {
+                            json.studentArray.data=json.studentArray.data.filter(function(item){
+                                return item.form_submitted==0;
+                            });       
+                        }
+
+                        if(date_processed!=''){
+                            json.studentArray.data=json.studentArray.data.filter(function(item){
+                                return item.processed_date==date_processed;
+                            }); 
+                        }
+
+                        
+
+                        for(var i=0;i<pdates.length;i++){
+                        $('#process_dropdown').append("<option>"+pdates[i]+"</option>");
+
+                    }
+                    
+
                         
                     return JSON.stringify( json.studentArray ); // return JSON string
                 }
@@ -391,6 +463,10 @@ $(document).ready(function(){
             });
         }
         });
+
+        $('#monthInput').val(month);
+        $('#yearInput').val(year);
+        $('#filter').val(choice);
         
     
         
@@ -415,7 +491,7 @@ $(document).ready(function(){
         $('#sectionTitle').find('b').text('Records');
         $('#mainContainer').empty();
         $('#mainContainerButtons').css('display','block');
-        $('#mainContainer').append('<div class="well text-center"><button type="button" class="btn btn-hot text-capitalize btn-lg" id="printReport">Print Report</button> <button type="button" class="btn btn-sunny text-uppercase btn-lg" id="managePrograms">Manage Programs</button><button type="button" class="btn btn-fresh text-uppercase btn-lg" id="addUsers">Add Users</button><button type="button" class="btn btn-sky text-uppercase btn-lg" id="manage">Manage Users</button><button type="button" class="btn btn-sky text-uppercase btn-lg" id="ip">ADD IP ADDRESS</button></div>');
+        $('#mainContainer').append('<div class="well text-center"><button type="button" class="btn btn-hot text-capitalize btn-lg" id="printReport">PRINT REPORT</button> <button type="button" class="btn btn-sunny text-uppercase btn-lg" id="managePrograms">Manage Programs</button><button type="button" class="btn btn-fresh text-uppercase btn-lg" id="addUsers">Add Users</button><button type="button" class="btn btn-sky text-uppercase btn-lg" id="manage">Manage Users</button><button type="button" class="btn btn-sky text-uppercase btn-lg" id="ip">ADD IP ADDRESS</button></div>');
         $('#mainContainer').append('<div class="table-responsive" style="display:none" id="programsTableContainer"><table id="programsTable" class="table table-bordred table-striped"><thead><th>S.No</th><th>Name</th><th>Stipend</th><th>Tenure</th><th>Sanctioned</th><th>Contingency</th><th>Medical</th><th>Maternity</th><th>Duty</th><th>Edit</th><th>Delete</th></thead><tbody></tbody></table><button type="button" class="btn btn-success btn-md" id="addProgramBtn">Add New</button>');
         $('#mainContainer').append('<div class="table-responsive" style="display:none" id="ipTableContainer"><table id="ipTable" class="table table-bordred table-striped"><thead><th>S.No</th><th>Name</th><th>IP ADDRESS</th><th>Edit</th><th>Delete</th></thead><tbody></tbody></table><button type="button" class="btn btn-success btn-md" id="addIPBtn">Add New</button>');
         $('#mainContainer').append('<div class="table-responsive" style="display:none" id="userTableContainer"><table id="usersTable" class="table table-bordred table-striped"><thead><th>S.No</th><th>Name</th><th>email</th><th>role</th><th>Delete</th></thead><tbody></tbody></table>');
@@ -817,10 +893,14 @@ console.log(name);
 
     })
 
+    $(document.body).on('click', '.viewStudentData', function(){
+        $('#LeavesDetails').modal('toggle');
+
+    })
 
 
     $(document.body).on('click', '.editStudentData', function(){
-
+        //alert("sadsa");
         console.log(allStudentsData);
         $('#editStudentData').modal('toggle');
         var index = $(this).parent().closest('tr').index();
@@ -832,6 +912,7 @@ console.log(name);
         $('#editStudentAadhar').val(allStudentsData[index].aadhar);
         $('#editStudentPhone').val(allStudentsData[index].phone);
         $('#editStudentAccountNo').val(allStudentsData[index].bank_ac_number);
+        $('#editStudentenroll').val('yes');        
         // end_date = "2016-11-13";
         var end_date = allStudentsData[index].end_date;
         var result = end_date.split('-');
@@ -855,6 +936,7 @@ console.log(name);
         var phone = $('#editStudentPhone').val();
         var bank = $('#editStudentPhone').val();
         var cessationDate = $('#editStudentCessationDate').val(); 
+        var enroll = $('#editStudentenroll').val(); 
         
         
 
@@ -863,7 +945,7 @@ console.log(name);
         $.ajax({
             type:"POST",
             url:"utils/updateStudent.php    ",
-            data:{name:name, rollno:rollno, programName:programName, email:email, aadhar:aadhar, phone:phone , bank:bank, cess:cessationDate},
+            data:{name:name, rollno:rollno, programName:programName, email:email, enrolled:enroll,aadhar:aadhar, phone:phone , bank:bank, cess:cessationDate},
             success:function(){
                 $.alert("Student details successfully updated");
             }
@@ -898,8 +980,11 @@ $(document.body).on('click', '#ip', function(){
             allStudentsTable();
         else if(tab=='Monthly')
         {
-            
-            monthlyRecord(5, 2017);
+            var today = new Date();
+           // var dd = today.getDate();
+            var mm = today.getMonth()+1;
+            var yyyy = today.getFullYear();
+            monthlyRecord(mm, yyyy,'all');
         }else if(tab=='Arears')
         {
             console.log('dasd');
@@ -962,20 +1047,67 @@ $(document.body).on('click', '#ip', function(){
     $(document.body).on('click', '#formSubmit', function(){
         var month = $('#monthInput').val();
         var year = $('#yearInput').val();
+        var choice = $('#filter').val();
         if(month == '' || year == '')
         {
             $.alert('Please enter month and year to proceed.');
         }else
         {
-            monthlyRecord(month, year);
+            monthlyRecord(month, year,choice);
         }
+    })
+
+     $(document.body).on('click', '#process_filter', function(){
+        var month = $('#monthInput').val();
+        var year = $('#yearInput').val();
+        var choice = 'all';
+        var date_processed=$('#process_dropdown').val();
+
+        if(month == '' || year == '')
+        {
+            $.alert('Please enter month and year to proceed.');
+        }else
+        {
+            monthlyRecord(month, year,choice,date_processed);
+        }
+    })
+
+
+     $(document.body).on('click', '#report_filter', function(){
+
+        var month = $('#reportMonth').val();
+        var year = $('#reportYear').val();
+        var prog = $('#reportProgram').val();
+       // alert(month+" "+year+" "+prog);
+        
+         $.ajax({
+            type:"POST",
+            url:"utils/getDate.php",
+            data:{month:month,year:year,prog:prog},
+            success:function(data){
+                console.log("data"+data);
+                data = jQuery.parseJSON(data);
+                console.log("parsed"+data);
+                var k=data.length;
+                //console.log("type"+type(data));
+                console.log("k"+k);
+                for(var i=0;i<k;i++)
+                {
+                    console.log(data[i]);
+                    $('#reportDate').append("<option>"+data[i]+"</option>");
+                }   
+            }
+
+        })
+
     })
 
 
 
     $(document.body).on('click', '.saveData', function(){
-        $(this).prop('disabled', true);
+       // $(this).prop('disabled', true);
         var id = $($(this).parent().closest('tr').find('td')[0]).text();
+        var rollno = $($(this).parent().closest('tr').find('td')[1]).text();
         var program_name = $($(this).parent().closest('tr').find('td')[3]).text();
         var presents = $($(this).parent().closest('tr').find('td')[5]).text();
         var absents = $($(this).parent().closest('tr').find('td')[6]).text();
@@ -984,16 +1116,23 @@ $(document.body).on('click', '#ip', function(){
         var cl = $($(this).parent().closest('tr').find('td')[9]).find('input').val();
         var maternity = $($(this).parent().closest('tr').find('td')[10]).find('input').val();
         var duty = $($(this).parent().closest('tr').find('td')[11]).find('input').val();
+        var work_off = $($(this).parent().closest('tr').find('td')[13]).find('input').val();
         // var sl = $('.multiLeavesPicker')[0].value;
         // var ml = $('.multiLeavesPicker')[1].value;
         // var cl = $('.multiLeavesPicker')[2].value;
         // var maternity = $('.multiLeavesPicker')[3].value;
         // var duty =  $('.multiLeavesPicker')[4].value;
-        console.log(sl)
-        console.log(ml)
-        console.log(cl)
-        console.log(maternity)
-        console.log(duty)
+        console.log("now");
+        console.log(id);
+        console.log(rollno);
+        console.log(presents);
+        console.log(absents);
+        console.log(sl);
+        console.log(ml);
+        console.log(cl);
+        console.log(maternity);
+        console.log(duty);
+        console.log(work_off);
 
         // var sl = $($($(this)[0]).parent().closest('tr').find('td')[7]).find('select').val();        
         // var ml = $($($(this)[0]).parent().closest('tr').find('td')[8]).find('select').val();
@@ -1004,10 +1143,183 @@ $(document.body).on('click', '#ip', function(){
         var year = $('#yearInput').val();
         // var formSubmit = $($(this).parent().closest('tr').find('input')).is(':checked');
         // console.log(formSubmit);
-        if(formSubmit)
-            var formSubmitted = 1;
-        else
-            var formSubmitted = 0;
+        // if(formSubmit)
+        //     var formSubmitted = 1;
+        // else
+        //     var formSubmitted = 0;
+        var amount;
+        var indexRow = $(this).parent().parent().index()
+        console.log("indexrow:"+indexRow);
+        // console.log();
+        $.confirm({
+            content: ' This action is permanent.',
+            buttons: {
+                Activate: {
+                    text: 'Proceed',
+                    btnClass:'btn-green',
+                    action: function () {
+                        $.confirm({
+                            content: ' This action can\'t be undone.',
+                            type:'orange',
+                            // theme:'supervan',
+                            title:'Do you really want to Proceed ?',
+                            icon: 'fa fa-exclamation',
+                            buttons: {
+                                Activate: {
+                                    btnClass:'btn-green',
+                                    text: 'Do it Anyway',
+
+                                    action: function () {
+                                        
+                                        $.ajax({
+                                            type:"POST",
+                                            url:'./utils/updateRecords.php',
+                                            data:{student_id:id , rollno:rollno,program_name:program_name, absents:absents, presents:presents, sl:sl, ml:ml, cl:cl, maternity:maternity, duty:duty, month:month, year:year,work_off:work_off},
+                                            success:function(data)
+                                            {
+                                                //data = jQuery.parseJSON(data);
+                                                console.log(data);
+                                                var pre=data.split(',');
+                                                console.log(pre);
+                                               // amount =data;
+                                                // $($($('#studentsTable').find('tr')[indexRow+1]).find('td')[13]).text(amount)
+                                               // $($($('#studentsTable').find('tr')[indexRow+1]).find('td')[15]).empty().text('DONE');
+                                               
+                                               if(data!=-1 && data!=-6 && data!=-5 && data!=-4 && data!=-3 && data!=-2 && 
+                                                data!=-10 && data!=-11 ){
+                                                    $($($('#studentsTable').find('tr')[indexRow+1]).find('td')[12]).empty().text(pre[0]);
+                                                 $($($('#studentsTable').find('tr')[indexRow+1]).find('td')[14]).empty().text(pre[1]);
+                                                }
+
+                                               
+                                                
+                                                // $('.inputFieldMonthlyTable').val('');
+                                                // $($($(this)[0]).parent().closest('tr').find('td')[7]).empty().text(sl);
+                                                // $($($(this)[0]).parent().closest('tr').find('td')[8]).empty().text(ml);
+                                                // $($($(this)[0]).parent().closest('tr').find('td')[9]).empty().text(cl);
+                                                // $($($(this)[0]).parent().closest('tr').find('td')[10]).empty().text(maternity);
+                                                // $($($(this)[0]).parent().closest('tr').find('td')[11]).empty().text(pre[0]);
+                                                // $($($(this)[0]).parent().closest('tr').find('td')[12]).empty().text(pre[1]);
+                                                  
+                                               // console.log(typeof(data.charAt(0)));
+                                                if(data  == -1)
+                                                    msg = 'sanctioned leaves applied is greater than balance santioned leaves';
+                                                else if(data == -2)
+                                                    msg = 'contingency leaves applied is greater than balance contingency leaves';
+                                                else if(data == -3)
+                                                    msg = 'medical leaves applied is greater than balance medical leaves';
+                                                else if(data == -4)
+                                                    msg = 'maternity leaves applied is greater than balance maternity leaves';
+                                                else if(data == -5)
+                                                    msg = 'duty leaves applied is greater than balance duty leaves';
+                                                else if (data==-6)
+                                                    msg='work off leaves applied is greater than balance work off leaves';
+                                                else if (data==-10)
+                                                        msg="absent cannot be negative";
+                                                else if(data==-11)
+                                                        msg="absent smaller than sum of all leaves";
+                                                else
+                                                        msg="successfully done";
+
+                                                $.alert(msg);
+                                                $(window).setTimeout(location.reload,2000);
+                                            },
+                                            statusCode:{
+                                                404:function()
+                                                {
+                                                    $.alert('oops');
+                                                }
+                                            }
+                                        })
+                                        
+                                    }
+                                },
+                                Cancel: {
+                                    btnClass:'btn-red',
+                                    action:function () {
+                                        $(this).prop('disabled', true);
+                                        $.alert({
+                                            title:'ABORTED!',
+                                            type:'red',
+                                            content:'Operation cancelled by the user.'
+                                        })
+                                    }
+                                }
+                            }
+                        });
+                        
+                    }
+                },
+                Cancel: {
+                    btnClass:'btn-red',
+                    action:function () {
+                        $.alert({
+                            title:'ABORTED!',
+                            type:'red',
+                            content:'No Input from user.'
+                        })
+                    }
+                }               
+            }
+        });
+
+
+        
+    })
+
+
+
+
+
+
+
+
+
+
+            $(document.body).on('click', '.submitData', function(){
+       // $(this).prop('disabled', true);
+        var id = $($(this).parent().closest('tr').find('td')[0]).text();
+        var rollno = $($(this).parent().closest('tr').find('td')[1]).text();
+        var program_name = $($(this).parent().closest('tr').find('td')[3]).text();
+        var presents = $($(this).parent().closest('tr').find('td')[5]).text();
+        var absents = $($(this).parent().closest('tr').find('td')[6]).text();
+        var sl = $($(this).parent().closest('tr').find('td')[7]).find('input').val();
+        var ml = $($(this).parent().closest('tr').find('td')[8]).find('input').val();
+        var cl = $($(this).parent().closest('tr').find('td')[9]).find('input').val();
+        var maternity = $($(this).parent().closest('tr').find('td')[10]).find('input').val();
+        var duty = $($(this).parent().closest('tr').find('td')[11]).find('input').val();
+        var work_off = $($(this).parent().closest('tr').find('td')[13]).find('input').val();
+        // var sl = $('.multiLeavesPicker')[0].value;
+        // var ml = $('.multiLeavesPicker')[1].value;
+        // var cl = $('.multiLeavesPicker')[2].value;
+        // var maternity = $('.multiLeavesPicker')[3].value;
+        // var duty =  $('.multiLeavesPicker')[4].value;
+        console.log(id);
+        console.log(rollno);
+        console.log(presents);
+        console.log(absents);
+        console.log(sl);
+        console.log(ml);
+        console.log(cl);
+        console.log(maternity);
+        console.log(duty);
+        console.log(work_off);
+
+        // var sl = $($($(this)[0]).parent().closest('tr').find('td')[7]).find('select').val();        
+        // var ml = $($($(this)[0]).parent().closest('tr').find('td')[8]).find('select').val();
+        // var cl = $($($(this)[0]).parent().closest('tr').find('td')[9]).find('select').val();
+        // var maternity = $($($(this)[0]).parent().closest('tr').find('td')[10]).find('select').val();
+        // var duty = $($($(this)[0]).parent().closest('tr').find('td')[11]).find('select').val();
+        var month = $('#monthInput').val();
+        var year = $('#yearInput').val();
+        console.log("month"+month);
+        console.log("year"+year);
+        // var formSubmit = $($(this).parent().closest('tr').find('input')).is(':checked');
+        // console.log(formSubmit);
+        // if(formSubmit)
+        //     var formSubmitted = 1;
+        // else
+        //     var formSubmitted = 0;
         var amount;
         var indexRow = $(this).parent().parent().index()
 
@@ -1034,21 +1346,38 @@ $(document.body).on('click', '#ip', function(){
                                         
                                         $.ajax({
                                             type:"POST",
-                                            url:'./utils/updateRecords.php',
-                                            data:{student_id:id, program_name:program_name, absents:absents, presents:presents, sl:sl, ml:ml, cl:cl, maternity:maternity, duty:duty, month:month, year:year},
+                                            url:'./utils/submitMonthly.php',
+                                            data:{student_id:id, rollno:rollno,program_name:program_name, absents:absents, presents:presents, sl:sl, ml:ml, cl:cl, maternity:maternity, duty:duty, month:month, year:year,work_off:work_off},
                                             success:function(data)
                                             {
-                                                //data = jQuery.parseJSON(data);
                                                 console.log(data);
-                                                amount =data;
-                                                // $($($('#studentsTable').find('tr')[indexRow+1]).find('td')[13]).text(amount)
+
+                                                var pre=data.split(',');
+                                                console.log(pre);
+                                                pre[0]=pre[0].slice(1,-1);
+                                                pre[1]=pre[1].slice(0,-1);
+                                                console.log(pre[0]);
+                                                console.log(pre[1]);
+                                               // var pre=data.split(',');
+                                                //console.log(pre);
+                                               
+                                                //amount = data;
+                                                // $($($('#studentsTable').find('tr')[indexRow+1]).find('td')[12]).text(amount)
                                                 $($($('#studentsTable').find('tr')[indexRow+1]).find('td')[15]).empty().text('DONE');
+                                                $($($('#studentsTable').find('tr')[indexRow+1]).find('td')[16]).empty().text('DONE');
+                                                $($($('#studentsTable').find('tr')[indexRow+1]).find('td')[12]).empty().text(pre[0]);
+                                                $($($('#studentsTable').find('tr')[indexRow+1]).find('td')[14]).empty().text(pre[1]);
+
                                                 $($($(this)[0]).parent().closest('tr').find('td')[7]).empty().text(sl);
                                                 $($($(this)[0]).parent().closest('tr').find('td')[8]).empty().text(ml);
                                                 $($($(this)[0]).parent().closest('tr').find('td')[9]).empty().text(cl);
                                                 $($($(this)[0]).parent().closest('tr').find('td')[10]).empty().text(maternity);
                                                 $($($(this)[0]).parent().closest('tr').find('td')[11]).empty().text(duty);
-                                                console.log(typeof(data.charAt(0)));
+                                                $($($(this)[0]).parent().closest('tr').find('td')[13]).empty().text(work_off);
+                                                //$($($(this)[0]).parent().closest('tr').find('td')[12]).empty().text(data[0]);
+                                               // $($($(this)[0]).parent().closest('tr').find('td')[14]).empty().text(data[1]);
+                                                
+                                               // console.log(typeof(data.charAt(0)));
                                                 if(data  == "-1")
                                                     msg = 'errrr in sl';
                                                 else if(data == -2)
@@ -1059,8 +1388,12 @@ $(document.body).on('click', '#ip', function(){
                                                     msg = 'error in maternity';
                                                 else if(data == -5)
                                                     msg = 'error in duty';
+                                                else if (data==-10)
+                                                        msg="absent cannot be negative";
+                                                else if(data==-11)
+                                                        msg="absent smaller than sum of all leaves";
                                                 else
-                                                    msg=data;
+                                                        msg="successfully done";
 
                                                 $.alert(msg);
                                             },
@@ -1106,6 +1439,19 @@ $(document.body).on('click', '#ip', function(){
 
         
     })
+
+
+
+
+
+
+
+
+
+
+
+
+
     $(document.body).on('click', '#printReport', function(){
         $('#myModal').modal('toggle');
         $.ajax({
@@ -1155,26 +1501,23 @@ $(document.body).on('click', '#ip', function(){
         $('#myModal').modal('toggle');
 
         
-        var yearMonth = $('#reportMonth').val();
-        var result = yearMonth.split('-');
-        
-        var month = result[1]
-        var year = result[0];
-        console.log(month + " " + year)
+        var month= $('#reportMonth').val();
+        var year= $('#reportYear').val();
+        var processed_date = $('#reportDate').val();
         var program = $('#reportProgram').val();
 
-        window.location = "./utils/printRecords.php?month="+month+"&year="+year+"&program_name="+program;
+        window.location = "./utils/printRecords.php?month="+month+"&year="+year+"&program_name="+program+"&processed_date="+processed_date;
 
-        // $.ajax({
-        //     type:'POST',
-        //     url:'./utils/printRecords.php',
-        //     data:{month:month,year:year, program_name:program},
-        //     success:function(data)
-        //     {
-        //         console.log(data);
-        //     }
+        $.ajax({
+            type:'POST',
+            url:'./utils/printRecords.php',
+            data:{month:month,year:year, program_name:program,processed_date:processed_date},
+            success:function(data)
+            {
+                console.log(data);
+            }
     
-        // })
+        })
     })
 
     $(document.body).on('click', '#logoutBtn', function(){
@@ -1187,16 +1530,19 @@ $(document.body).on('click', '#ip', function(){
 
     $(document.body).on('click', '#uploadMonthlyCSV', function(){
             
-        
+            //alert("asdsa");
             var formData = new FormData ($("#uploadMonthlyData")[0]);
+             var m=$('#monthMonthlyCsv').val();
+             var y=$('#yearMonthlyCsv').val();
             console.log(formData)
+            //alert("asds");
             $.ajax({
                 url: "./utils/uploadcsv.php",// chnage location
                 type: 'POST',
                 data: formData,
                 async: false,
                 success: function (data) {
-                    alert(data)
+                    alert(data);
                 },
                 cache: false,
                 contentType: false,
@@ -1216,7 +1562,14 @@ $(document.body).on('click', '#ip', function(){
                 data: formData,
                 async: false,
                 success: function (data) {
-                    
+                    if(data==1)
+                    {
+                        alert("wrong");
+                    }
+                    else
+                    {
+                        alert("right");
+                    }
                 },
                 cache: false,
                 contentType: false,

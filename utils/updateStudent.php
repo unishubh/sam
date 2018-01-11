@@ -24,7 +24,8 @@ else
 	$phone=$params['phone'];
 	$bank=$params['bank'];
 	$cess=$params['cess']; 
-	$stmt = $db->prepare( "UPDATE students SET name ='$name' ,email='$email' ,aadhar='$aadhar' ,phone='$phone' ,bank_ac_number='$bank' ,end_date='$cess' where rollno='$rollno' AND program_name='$programName'");
+	$enrolled=$params['enrolled'];
+	$stmt = $db->prepare( "UPDATE students SET name ='$name' ,email='$email' ,aadhar='$aadhar' ,phone='$phone' ,bank_ac_number='$bank' ,end_date='$cess', enrolled='$enrolled' where rollno='$rollno' AND program_name='$programName'");
 	$stmt->execute();
 				
 	http_response_code($success);
